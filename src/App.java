@@ -14,6 +14,11 @@ public class App {
             i += 1;
         }
     }
+
+    public static void storeManager(LinkedList<Equipment> stock){
+
+    }
+
     public static void main(String[] args) throws Exception {
         BufferedReader reader = new BufferedReader(
             new InputStreamReader(System.in));
@@ -57,12 +62,28 @@ public class App {
                 case 2:
                     LinkedList<Equipment> stock = store.getGoods();
                     printInv(stock);
+                    System.out.println((stock.size()+1)+". Find equipment in price range");
                     System.out.println("0. Return");
                     System.out.print("You choose? ");
                     int optBuy = Integer.parseInt(reader.readLine());
                     optBuy -= 1;
-                    if (optBuy < 0 || optBuy >= stock.size())
+
+                    if(optBuy == stock.size()){
+                        System.out.println("Enter your minimum and maximum price range");
+                        int min = Integer.parseInt(reader.readLine());
+                        int max = Integer.parseInt(reader.readLine());
+
+                        stock = store.findInPriceRange(min, max);
+                        printInv(stock);
+                        System.out.println("0. Return");
+                        System.out.print("You choose? ");
+                        optBuy = Integer.parseInt(reader.readLine());
+                        optBuy -= 1;
+                    }
+
+                    if (optBuy < 0 || optBuy >= stock.size()+1)
                         break;
+
                     Equipment item = stock.get(optBuy);
                     if (item.getCost() > knight.getGold()){
                         System.out.println("Not enough gold!");
@@ -77,6 +98,44 @@ public class App {
                     System.out.println("Item is in your inventory now!");
                     break;
                 case 3:
+                    LinkedList<Equipment> inventory = knight.getEquipment();
+                    printInv(inventory);
+                    System.out.println("0. Return");
+                    System.out.print("You choose? ");
+                    int optSell = Integer.parseInt(reader.readLine());
+                    optSell -= 1;
+
+                    if (optSell < 0 || optSell >= inventory.size()+1)
+                        break;
+
+                    Equipment item1 = inventory.get(optSell);
+                    knight.sellItem(item1);
+                    store.buyItem(item1);
+                    System.out.println("Item has been sold!");
+                    break;
+                case 4:
+                    System.out.println("1. Sort by item weight");
+                    System.out.println("2. Sort by item cost");
+                    System.out.println("3. Do not sort");
+                    System.out.println("0. Return");
+                    System.out.print("You choose? ");
+                    int optInv = Integer.parseInt(reader.readLine());
+
+                    if (optInv > 3 || optInv < 1)
+                        break;
+
+                    LinkedList<Equipment> inv;
+                    switch(optInv){
+                        case 1:
+                            knight.sortByWeight();
+                            break;
+                        case 2:
+                            knight.sortByCost();
+                    }
+
+                    inv = knight.getEquipment();
+                    printInv(inv);
+                    break;
                 case 0:
                     System.out.print("Are you sure you want to exit? (y/n) "); 
                     String quitOpt = reader.readLine();
